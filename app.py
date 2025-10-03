@@ -7,7 +7,7 @@ import base64, io, joblib
 # ===============================
 # LOAD MODEL FROM SECRETS
 # ===============================
-model_bytes = base64.b64decode(st.secrets["model_pickle"])
+model_bytes = base64.b64decode(st.secrets["rf_collision_model.pkl"])
 model = joblib.load(io.BytesIO(model_bytes))
 
 # ===============================

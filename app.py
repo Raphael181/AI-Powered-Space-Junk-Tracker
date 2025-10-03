@@ -1,113 +1,89 @@
-
+# Write the Streamlit app code into app.py
+app_code = """\
 import streamlit as st
 import numpy as np
+import pickle
 import plotly.graph_objects as go
-import base64, io, joblib
 
-# ===============================
-# LOAD MODEL FROM SECRETS
-# ===============================
-model_bytes = base64.b64decode(st.secrets["rf_collision_model.pkl"])
-model = joblib.load(io.BytesIO(model_bytes))
+# -----------------------------
+# Function: load_model
+# -----------------------------
+# Loads the RandomForestClassifier from file.
+@st.cache_resource
+def load_model():
+    with open("rf_collision_model.pkl", "rb") as f:
+        model = pickle.load(f)
+    return model
 
-# ===============================
-# ORBIT FUNCTIONS (SAME AS TRAINING)
-# ===============================
-def rotate_z(vec, angle):
-    c, s = np.cos(angle), np.sin(angle)
-    R = np.array([[c, -s, 0],[s, c, 0],[0,0,1]])
-    return R @ vec
+# -----------------------------
+# Function: visualize_orbits
+# -----------------------------
+# Plots two simple orbits as circles for visualization.
+# Not physically accurate, but useful for hackathon demo.
+def visualize_orbits(orbit1, orbit2):
+    theta = np.linspace(0, 2*np.pi, 200)
 
-def rotate_x(vec, angle):
-    c, s = np.cos(angle), np.sin(angle)
-    R = np.array([[1,0,0],[0,c,-s],[0,s,c]])
-    return R @ vec
+    # Orbit 1 (assume circular for simplicity)
+    x1 = orbit1["a"] * np.cos(theta)
+    y1 = orbit1["a"] * np.sin(theta)
+    z1 = np.zeros_like(theta)
 
-def orbital_radius(a, e, theta):
-    return a * (1 - e**2) / (1 + e * np.cos(theta))
+    # Orbit 2 (with inclination tilt)
+    x2 = orbit2["a"] * np.cos(theta)
+    y2 = orbit2["a"] * np.sin(theta) * np.cos(np.radians(orbit2["i"]))
+    z2 = orbit2["a"] * np.sin(theta) * np.sin(np.radians(orbit2["i"]))
 
-def classical_to_eci(a, e, i_deg, raan_deg, argp_deg, theta):
-    r = orbital_radius(a, e, theta)
-    x_op = r * np.cos(theta)
-    y_op = r * np.sin(theta)
-    z_op = 0.0
-    vec = np.array([x_op, y_op, z_op])
-    vec = rotate_z(vec, np.deg2rad(argp_deg))
-    vec = rotate_x(vec, np.deg2rad(i_deg))
-    vec = rotate_z(vec, np.deg2rad(raan_deg))
-    return vec
+    fig = go.Figure()
+    fig.add_trace(go.Scatter3d(x=x1, y=y1, z=z1, mode="lines", name="Orbit 1"))
+    fig.add_trace(go.Scatter3d(x=x2, y=y2, z=z2, mode="lines", name="Orbit 2"))
 
-def generate_random_orbit():
-    a = 6371 + np.random.uniform(200, 1200)
-    e = np.random.beta(1, 8) * 0.05
-    i = np.random.uniform(0, 90)
-    raan = np.random.uniform(0, 360)
-    argp = np.random.uniform(0, 360)
-    return {"a": a, "e": e, "i": i, "raan": raan, "argp": argp}
+    fig.update_layout(
+        title="Simplified Orbit Visualization",
+        scene=dict(xaxis_title="X (km)", yaxis_title="Y (km)", zaxis_title="Z (km)"),
+        width=700, height=500
+    )
+    return fig
 
-def compute_features(o1, o2):
-    theta0 = 0
-    p1 = classical_to_eci(o1["a"], o1["e"], o1["i"], o1["raan"], o1["argp"], theta0)
-    p2 = classical_to_eci(o2["a"], o2["e"], o2["i"], o2["raan"], o2["argp"], theta0)
-    sep = np.linalg.norm(p1 - p2)
-    alt1 = np.linalg.norm(p1) - 6371
-    alt2 = np.linalg.norm(p2) - 6371
-    alt_diff = abs(alt1 - alt2)
-    a_diff = abs(o1["a"] - o2["a"])
-    i_diff = abs(o1["i"] - o2["i"])
-    mu = 398600.4418
-    v1 = np.sqrt(mu * (2/np.linalg.norm(p1) - 1/o1["a"]))
-    v2 = np.sqrt(mu * (2/np.linalg.norm(p2) - 1/o2["a"]))
-    rel_speed = abs(v1 - v2)
-    return np.array([sep, alt_diff, a_diff, i_diff, rel_speed]).reshape(1,-1)
-
-def get_positions(o, steps=200):
-    thetas = np.linspace(0, 2*np.pi, steps)
-    return np.array([classical_to_eci(o["a"], o["e"], o["i"], o["raan"], o["argp"], t) for t in thetas])
-
-# ===============================
-# STREAMLIT APP LAYOUT
-# ===============================
-st.set_page_config(page_title="AI-Powered Space Junk Tracker", layout="wide")
+# -----------------------------
+# Main App
+# -----------------------------
 st.title("🛰️ AI-Powered Space Junk Tracker")
-st.write("Predicts potential satellite collision risk using ML.")
+st.markdown("Predict potential orbital collisions with a simple ML model.")
 
-st.sidebar.header("Controls")
-generate_button = st.sidebar.button("🔄 Generate New Pair")
+model = load_model()
 
-# Keep orbits in session state so they persist between reruns
-if "o1" not in st.session_state or generate_button:
-    st.session_state.o1 = generate_random_orbit()
-    st.session_state.o2 = generate_random_orbit()
+# Sidebar inputs
+st.sidebar.header("Input Orbital Parameters")
+a1 = st.sidebar.slider("Semi-major axis Orbit 1 (km)", 6500, 8000, 7000)
+e1 = st.sidebar.slider("Eccentricity Orbit 1", 0.0, 0.1, 0.01)
+i1 = st.sidebar.slider("Inclination Orbit 1 (deg)", 0, 180, 45)
+a2 = st.sidebar.slider("Semi-major axis Orbit 2 (km)", 6500, 8000, 7100)
+e2 = st.sidebar.slider("Eccentricity Orbit 2", 0.0, 0.1, 0.02)
+i2 = st.sidebar.slider("Inclination Orbit 2 (deg)", 0, 180, 60)
+v_rel = st.sidebar.slider("Relative velocity (km/s)", 0.0, 15.0, 7.5)
+d_min = st.sidebar.slider("Minimum approach distance (km)", 0.0, 10.0, 5.0)
 
-o1 = st.session_state.o1
-o2 = st.session_state.o2
+# Build input vector
+features = np.array([[a1, e1, i1, v_rel, d_min]])
 
-# Run prediction
-features = compute_features(o1, o2)
-pred_prob = model.predict_proba(features)[0, 1]
-pred_label = "🚨 COLLISION RISK" if pred_prob > 0.5 else "✅ SAFE PASS"
+# Prediction
+prediction = model.predict(features)[0]
+prob = model.predict_proba(features)[0][1]
 
-# Visualize in 3D
-pos1 = get_positions(o1, 300)
-pos2 = get_positions(o2, 300)
-fig = go.Figure()
+st.subheader("🔮 Collision Prediction")
+if prediction == 1:
+    st.error(f"⚠️ Potential Collision Risk! (Probability: {prob:.2f})")
+else:
+    st.success(f"✅ Safe (Probability of collision: {prob:.2f})")
 
-# Earth Sphere
-R = 6371
-u = np.linspace(0, 2*np.pi, 40)
-v = np.linspace(0, np.pi, 20)
-x = R * np.outer(np.cos(u), np.sin(v))
-y = R * np.outer(np.sin(u), np.sin(v))
-z = R * np.outer(np.ones_like(u), np.cos(v))
-fig.add_trace(go.Surface(x=x, y=y, z=z, opacity=0.7, showscale=False))
+# Orbit visualization
+orbit1 = {"a": a1, "e": e1, "i": i1}
+orbit2 = {"a": a2, "e": e2, "i": i2}
+st.plotly_chart(visualize_orbits(orbit1, orbit2))
+"""
 
-# Orbits
-fig.add_trace(go.Scatter3d(x=pos1[:,0], y=pos1[:,1], z=pos1[:,2], mode="lines", name="Orbit 1"))
-fig.add_trace(go.Scatter3d(x=pos2[:,0], y=pos2[:,1], z=pos2[:,2], mode="lines", name="Orbit 2"))
+# Save file
+with open("app.py", "w") as f:
+    f.write(app_code)
 
-fig.update_layout(scene=dict(aspectmode="data"), title=f"Prediction: {pred_label} (Prob={pred_prob:.2f})")
-st.plotly_chart(fig, use_container_width=True)
-
-st.subheader("Prediction Result")
-st.metric(label="Collision Probability", value=f"{pred_prob:.2%}", delta="HIGH" if pred_prob > 0.5 else "LOW")
+print("✅ app.py saved successfully!")

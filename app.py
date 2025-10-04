@@ -48,6 +48,52 @@ def visualize_orbits(orbit1, orbit2):
 # Main App
 # -----------------------------
 st.title("🛰️ AI-Powered Space Junk Tracker")
+# --- Custom CSS styling ---
+st.markdown("""
+    <style>
+    /* Sidebar styling */
+    [data-testid="stSidebar"] {
+        background: rgba(10, 15, 40, 0.8);
+        backdrop-filter: blur(10px);
+        color: #E0E7FF;
+    }
+
+    /* Main title styling */
+    h1 {
+        background: linear-gradient(90deg, #6EE7B7, #3B82F6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Center and style subheaders */
+    h2, h3 {
+        color: #E0E7FF;
+        text-align: center;
+    }
+
+    /* Background color for the main app */
+    .stApp {
+        background-color: #0A0E1A;
+    }
+
+    /* Sliders and buttons */
+    .stSlider label, .stButton button {
+        color: #E0E7FF !important;
+    }
+
+    .stButton button {
+        background: linear-gradient(90deg, #3B82F6, #9333EA);
+        border: none;
+        color: white;
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+    }
+    .stButton button:hover {
+        background: linear-gradient(90deg, #2563EB, #7C3AED);
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 st.markdown("Predict potential orbital collisions with a simple ML model.")
 
 model = load_model()
@@ -76,15 +122,6 @@ if prediction == 1:
 else:
     st.success(f"✅ Safe (Probability of collision: {prob:.2f})")
 
-#add designs
-import streamlit_lottie as st_lottie
-st_lottie("https://assets10.lottiefiles.com/packages/lf20_x62chJ.json", height=200)
-
-[data-testid="stSidebar"] {
-    background: rgba(10, 15, 40, 0.8);
-    backdrop-filter: blur(10px);
-    color: #E0E7FF;
-}
 
 # Orbit visualization
 orbit1 = {"a": a1, "e": e1, "i": i1}

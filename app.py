@@ -48,14 +48,16 @@ def visualize_orbits(orbit1, orbit2):
 # Main App
 # -----------------------------
 
-st.title("🛰️ AI-Powered Space Junk Tracker")
+# Set the page configuration
+st.set_page_config(page_title="AI-Powered Space Junk Tracker", layout="wide")
 
-#CSS safe
+# --- Inject Custom CSS (MUST be inside triple quotes) ---
 st.markdown("""
 <style>
 /* Sidebar styling */
 [data-testid="stSidebar"] {
     background: rgba(10, 15, 40, 0.8);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     color: #E0E7FF;
 }
@@ -66,6 +68,7 @@ h1 {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-align: center;
+    font-weight: 900;
 }
 
 /* Subheaders */
@@ -74,7 +77,7 @@ h2, h3 {
     text-align: center;
 }
 
-/* Background */
+/* App background */
 .stApp {
     background-color: #0A0E1A;
 }
@@ -90,6 +93,7 @@ h2, h3 {
     color: white;
     border-radius: 8px;
     padding: 0.6rem 1rem;
+    font-weight: 600;
 }
 .stButton button:hover {
     background: linear-gradient(90deg, #2563EB, #7C3AED);
@@ -97,7 +101,9 @@ h2, h3 {
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("Predict potential orbital collisions with a simple ML model.")
+# --- Main App Title ---
+st.title("🛰️ AI-Powered Space Junk Tracker")
+st.write("Predict potential orbital collisions using a simple ML model with a cool modern UI 🚀")
 
 model = load_model()
 

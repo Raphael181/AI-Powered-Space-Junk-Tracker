@@ -50,7 +50,7 @@ def visualize_orbits(orbit1, orbit2):
 st.title("🛰️ AI-Powered Space Junk Tracker")
 # --- Custom CSS styling ---
 st.markdown("""
-    <style>
+<style>
     /* Sidebar styling */
     [data-testid="stSidebar"] {
         background: rgba(10, 15, 40, 0.8);
@@ -91,7 +91,7 @@ st.markdown("""
     .stButton button:hover {
         background: linear-gradient(90deg, #2563EB, #7C3AED);
     }
-    </style>
+</style>
 """, unsafe_allow_html=True)
 
 st.markdown("Predict potential orbital collisions with a simple ML model.")

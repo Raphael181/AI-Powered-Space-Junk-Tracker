@@ -80,14 +80,12 @@ st.markdown("""
     }
 
     .stButton button {
-        background: linear-gradient(90deg, #3B82F6, #9333EA);
         border: none;
         color: white;
         border-radius: 8px;
         padding: 0.6rem 1rem;
     }
     .stButton button:hover {
-        background: linear-gradient(90deg, #2563EB, #7C3AED);
     }
 </style>
 """, unsafe_allow_html=True)

@@ -59,7 +59,6 @@ st.markdown("""
 
     /* Main title styling */
     h1 {
-        background: linear-gradient(90deg, #6EE7B7, #3B82F6);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }

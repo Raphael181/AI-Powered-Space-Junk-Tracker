@@ -76,6 +76,16 @@ if prediction == 1:
 else:
     st.success(f"✅ Safe (Probability of collision: {prob:.2f})")
 
+#add designs
+import streamlit_lottie as st_lottie
+st_lottie("https://assets10.lottiefiles.com/packages/lf20_x62chJ.json", height=200)
+
+[data-testid="stSidebar"] {
+    background: rgba(10, 15, 40, 0.8);
+    backdrop-filter: blur(10px);
+    color: #E0E7FF;
+}
+
 # Orbit visualization
 orbit1 = {"a": a1, "e": e1, "i": i1}
 orbit2 = {"a": a2, "e": e2, "i": i2}

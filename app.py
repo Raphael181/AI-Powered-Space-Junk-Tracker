@@ -86,6 +86,16 @@ orbit1 = {"a": a1, "e": e1, "i": i1}
 orbit2 = {"a": a2, "e": e2, "i": i2}
 st.plotly_chart(visualize_orbits(orbit1, orbit2))
 
+# Function to generate orbital path coordinates
+def generate_orbit(a, e, i_deg):
+    """Return XYZ coordinates for a simplified orbit."""
+    theta = np.linspace(0, 2*np.pi, 200)
+    r = (a * (1 - e**2)) / (1 + e * np.cos(theta))
+    x = r * np.cos(theta)
+    y = r * np.sin(theta)
+    z = y * np.tan(np.radians(i_deg))
+    return x, y, z
+
 x, y, z = generate_orbit(sma, ecc, inc)
 
 fig = go.Figure()

@@ -86,6 +86,17 @@ orbit1 = {"a": a1, "e": e1, "i": i1}
 orbit2 = {"a": a2, "e": e2, "i": i2}
 st.plotly_chart(visualize_orbits(orbit1, orbit2))
 
+x, y, z = generate_orbit(sma, ecc, inc)
+
+fig = go.Figure()
+
+# Draw orbit path
+fig.add_trace(go.Scatter3d(
+    x=x, y=y, z=z,
+    mode="lines",
+    line=dict(color="#00FFFF", width=4),
+    name="Orbit Path"
+))
 
 # Earth (just a sphere)
 u, v = np.mgrid[0:2*np.pi:40j, 0:np.pi:20j]

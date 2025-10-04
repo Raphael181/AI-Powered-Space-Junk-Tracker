@@ -85,6 +85,35 @@ else:
 orbit1 = {"a": a1, "e": e1, "i": i1}
 orbit2 = {"a": a2, "e": e2, "i": i2}
 st.plotly_chart(visualize_orbits(orbit1, orbit2))
+
+
+# Earth (just a sphere)
+u, v = np.mgrid[0:2*np.pi:40j, 0:np.pi:20j]
+xe = 6371 * np.cos(u) * np.sin(v)
+ye = 6371 * np.sin(u) * np.sin(v)
+ze = 6371 * np.cos(v)
+fig.add_trace(go.Surface(
+    x=xe, y=ye, z=ze,
+    colorscale=[[0, "#001F54"], [1, "#003F7F"]],
+    opacity=0.9,
+    showscale=False,
+    name="Earth"
+))
+
+# Camera and layout styling
+fig.update_layout(
+    scene=dict(
+        xaxis=dict(visible=False),
+        yaxis=dict(visible=False),
+        zaxis=dict(visible=False),
+        bgcolor="#0A0E1A"
+    ),
+    margin=dict(l=0, r=0, b=0, t=0),
+    paper_bgcolor="#0A0E1A",
+    showlegend=False
+)
+
+st.plotly_chart(fig, use_container_width=True)
 """
 
 # Save file

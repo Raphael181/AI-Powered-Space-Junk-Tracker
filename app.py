@@ -54,7 +54,6 @@ st.markdown("""
     /* Sidebar styling */
     [data-testid="stSidebar"] {
         background: rgba(10, 15, 40, 0.8);
-        backdrop-filter: blur(10px);
         color: #E0E7FF;
     }
 

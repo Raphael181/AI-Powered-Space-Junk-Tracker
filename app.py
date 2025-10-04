@@ -88,7 +88,7 @@ st.plotly_chart(visualize_orbits(orbit1, orbit2))
 
 # Function to generate orbital path coordinates
 def generate_orbit(a, e, i_deg):
-    """Return XYZ coordinates for a simplified orbit."""
+    #Return XYZ coordinates for a simplified orbit.
     theta = np.linspace(0, 2*np.pi, 200)
     r = (a * (1 - e**2)) / (1 + e * np.cos(theta))
     x = r * np.cos(theta)

@@ -50,60 +50,7 @@ def visualize_orbits(orbit1, orbit2):
 
 st.set_page_config(page_title="AI-Powered Space Junk Tracker", layout="wide")
 
-# ✅ Inject CSS safely (this must be exactly like this)
-st.markdown(
-    """
-    <style>
-    /* Sidebar styling */
-    [data-testid="stSidebar"] {
-        background: rgba(10, 15, 40, 0.8);
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
-        color: #E0E7FF;
-    }
 
-    /* Main title styling */
-    h1 {
-        background: linear-gradient(90deg, #6EE7B7, #3B82F6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-align: center;
-        font-weight: 900;
-    }
-
-    /* Subheaders */
-    h2, h3 {
-        color: #E0E7FF;
-        text-align: center;
-    }
-
-    /* App background */
-    .stApp {
-        background-color: #0A0E1A;
-    }
-
-    /* Sliders and buttons */
-    .stSlider label, .stButton button {
-        color: #E0E7FF !important;
-    }
-
-    .stButton button {
-        background: linear-gradient(90deg, #3B82F6, #9333EA);
-        border: none;
-        color: white;
-        border-radius: 8px;
-        padding: 0.6rem 1rem;
-        font-weight: 600;
-    }
-    .stButton button:hover {
-        background: linear-gradient(90deg, #2563EB, #7C3AED);
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# --- Test section (you can replace this with your ML UI) ---
 st.title("🛰️ AI-Powered Space Junk Tracker")
 st.write("Predict potential orbital collisions using AI and visualize orbits in 3D 🚀")
 

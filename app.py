@@ -82,7 +82,6 @@ st.markdown("""
     .stButton button {
         border: none;
         color: white;
-        border-radius: 0.8px;
         padding: 0.6rem 1rem;
     }
     .stButton button:hover {

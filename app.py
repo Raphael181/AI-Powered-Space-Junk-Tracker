@@ -86,6 +86,14 @@ orbit1 = {"a": a1, "e": e1, "i": i1}
 orbit2 = {"a": a2, "e": e2, "i": i2}
 st.plotly_chart(visualize_orbits(orbit1, orbit2))
 
+col1, col2, col3 = st.columns(3)
+with col1:
+    sma = st.slider("Semi-major Axis (km)", 6500, 8000, 7200)
+with col2:
+    ecc = st.slider("Eccentricity", 0.0, 0.9, 0.1)
+with col3:
+    inc = st.slider("Inclination (°)", 0, 180, 45)
+
 # Function to generate orbital path coordinates
 def generate_orbit(a, e, i_deg):
     #Return XYZ coordinates for a simplified orbit.
